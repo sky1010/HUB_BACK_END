@@ -1,6 +1,6 @@
-const Files = require('../sqlmodels/fileModel');
+const Files = require('../models/fileModel');
 const express = require('express');
-const Client = require('../sqlmodels/clientModel');
+const Client = require('../models/clientModel');
 const router = express.Router();
 var fs = require('fs');
 
