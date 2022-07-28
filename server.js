@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const passport = require("passport");
 const fs = require("fs");
+require("dotenv").config();
 const applyPassportStrat = require("./config/passport");
 const fileUpload = require("express-fileupload");
 const mySQL = require("./config/database");
@@ -20,7 +21,6 @@ try {
 } catch (error) {
   console.error("Connection error:", error);
 }
-
 const app = express();
 app.use(function (req, res, next) {
   // Website you wish to allow to connect
