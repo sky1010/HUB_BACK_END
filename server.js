@@ -1,36 +1,18 @@
 const express = require("express");
-const router = express.Router();
-const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const passport = require("passport");
-const users = require("./Routes/API/users");
-const path = require("path");
 const fs = require("fs");
-const multer = require("multer");
-const Gridfs = require("multer-gridfs-storage");
-const Grid = require("gridfs-stream");
-const db = require("./config/keys").mongoURI;
 const applyPassportStrat = require("./config/passport");
-const fileUplaod = require("express-fileupload");
 const fileUpload = require("express-fileupload");
 const mySQL = require("./config/database");
-// const clientRoutes = require('./Routes/API/index');
 const clients = require("./controllers/clients");
 const sqlusers = require("./controllers/users");
 const file = require("./controllers/files");
 const userUploads = require("./controllers/userFiles");
-const elFinder = require("elfinder-node");
 const Files = require("./models/fileModel");
 const UserFiles = require("./models/userFileModel");
 const Translations = require("./controllers/translations");
-const { json } = require("body-parser");
-const { callbackify } = require("util");
-
-mongoose
-  .connect(db, { useNewUrlParser: true })
-  .then(() => console.log("MongoDB successfully connected"))
-  .catch((err) => console.log(err));
 
 try {
   mySQL.authenticate();
@@ -87,7 +69,6 @@ app.use(
 app.use(bodyParser.json());
 applyPassportStrat(passport);
 // Setting up the back-end default route ("/api/???")
-app.use("/api/", users);
 app.use("/api/clients/", clients);
 app.use("/api/users/", sqlusers);
 app.use("/api/files/", file);

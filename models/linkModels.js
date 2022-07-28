@@ -1,20 +1,26 @@
-const { Sequelize } = require('sequelize');
-const mySQL = require('../config/database');
+const { Sequelize } = require("sequelize");
+const mySQL = require("../config/database");
 
 const { DataTypes } = Sequelize;
 
-const Links = mySQL.define('Links', {
+const Links = mySQL.define(
+  "Links",
+  {
     url: {
-        type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     category: {
-        type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     user: {
-        type: DataTypes.INTEGER
-    }
-}, {
-    freezeTableName: true
-});
-
+      type: DataTypes.INTEGER,
+    },
+  },
+  {
+    freezeTableName: true,
+  }
+);
+(async () => {
+  await Links.sync({ alter: true });
+})();
 module.exports = Links;
