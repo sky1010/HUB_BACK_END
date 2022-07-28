@@ -16,7 +16,7 @@ const Translations = require("./controllers/translations");
 
 try {
   mySQL.authenticate();
-  console.log("MySQL DB successfully connected");
+  console.log("database successfully connected");
 } catch (error) {
   console.error("Connection error:", error);
 }
