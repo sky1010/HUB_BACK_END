@@ -6,6 +6,12 @@ const { DataTypes } = Sequelize;
 const User = mySQL.define(
   "User",
   {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
+    },
     name: {
       type: DataTypes.STRING,
     },
