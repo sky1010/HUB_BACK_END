@@ -8,16 +8,26 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const keys = require("../config/keys");
 const fileUpload = require("express-fileupload");
+const { Op } = require("sequelize");
 const app = express();
 app.use(fileUpload());
 
-router.post("/registerUser", (req, res) => {
+router.post("/registerUser", async (req, res) => {
   const newUser = {
     name: req.body.name,
     email: req.body.email,
     client: req.body.client,
     password: req.body.password,
+    userName: req.body.userName,
   };
+  const prevUser = await User.findOne({
+    where: {
+      userName: req.body.userName,
+    },
+  });
+  if (prevUser) {
+    return res.status(409).json({ error: "userName already exsist" });
+  }
   bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(newUser.password, salt, (err, hash) => {
       if (err) throw err;
@@ -35,12 +45,23 @@ router.post("/registerUser", (req, res) => {
 
 router.post("/loginUser", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { emailOrUsername, password } = req.body;
 
-    if (!email || !password)
+    if (!emailOrUsername || !password)
       return res.status(400).json({ msg: "Please fill all fields to login" });
 
-    const user = await User.findOne({ where: { email: email } });
+    const user = await User.findOne({
+      where: {
+        [Op.or]: [
+          {
+            email: emailOrUsername.trim(),
+          },
+          {
+            userName: emailOrUsername.trim(),
+          },
+        ],
+      },
+    });
 
     if (!user)
       return res

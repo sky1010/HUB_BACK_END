@@ -1,7 +1,7 @@
 const { Sequelize } = require("sequelize");
 const mySQL = require("../config/database");
 const bcrypt = require("bcryptjs");
-
+const ClientModal = require("./clientModel");
 const { DataTypes } = Sequelize;
 
 const User = mySQL.define(
@@ -16,8 +16,14 @@ const User = mySQL.define(
     name: {
       type: DataTypes.STRING,
     },
+    userName: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: true,
+    },
     email: {
       type: DataTypes.STRING,
+      unique: false,
     },
     password: {
       type: DataTypes.STRING,
@@ -33,31 +39,5 @@ const User = mySQL.define(
 (async () => {
   await User.sync({ alter: true });
 })();
-const newUser = {
-  name: "Greig Jones",
-  email: "greig@forumconcepts.fr",
-  client: 6,
-  password: "hubsqlBeta",
-};
-(() => {
-  bcrypt.genSalt(10, (err, salt) => {
-    bcrypt.hash(newUser.password, salt, async (err, hash) => {
-      if (err) throw err;
-      newUser.password = hash;
-      console.log(newUser);
-      const prev = await User.findOne({
-        where: {
-          email: newUser.email,
-        },
-      });
-      if (!prev) {
-        User.create(newUser)
-          .then()
-          .catch((err) => {
-            console.log(err);
-          });
-      }
-    });
-  });
-})();
+
 module.exports = User;

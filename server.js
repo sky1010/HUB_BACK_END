@@ -12,15 +12,20 @@ const sqlusers = require("./controllers/users");
 const file = require("./controllers/files");
 const userUploads = require("./controllers/userFiles");
 const Files = require("./models/fileModel");
+const clientModal = require("./models/clientModel");
 const UserFiles = require("./models/userFileModel");
 const Translations = require("./controllers/translations");
+const bcrypt = require("bcryptjs");
+(async () => {
+  try {
+    await mySQL.authenticate();
+    console.log("database successfully connected");
+  } catch (error) {
+    console.error("Connection error:", error);
+  }
+})();
+const userModal = require("./models/userModel");
 
-try {
-  mySQL.authenticate();
-  console.log("database successfully connected");
-} catch (error) {
-  console.error("Connection error:", error);
-}
 const app = express();
 app.use(function (req, res, next) {
   // Website you wish to allow to connect
@@ -75,7 +80,50 @@ app.use("/api/files/", file);
 app.use("/api/uploads/", userUploads);
 app.use("/api/translations/", Translations);
 app.use(fileUpload());
+const newUser = {
+  name: "Greig Jones",
+  email: "greig@forumconcepts.fr",
+  userName: "admin",
+  password: "hubsqlBeta",
+};
+(async () => {
+  const [client] = await clientModal.findOrCreate({
+    where: {
+      name: "Forum concept",
+    },
+  });
 
+  setTimeout(async () => {
+    const prev = await userModal.findOne({
+      where: {
+        userName: newUser.userName,
+      },
+    });
+    if (!prev) {
+      bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(newUser.password, salt, async (err, hash) => {
+          if (err) throw err;
+          newUser.password = hash;
+          const allUsers = await userModal.findAll({
+            attributes: ["id"],
+            order: [["id", "ASC"]],
+          });
+
+          userModal
+            .create({
+              id: allUsers[allUsers.length - 1].id + 1,
+              ...newUser,
+              client: client.id,
+            })
+            .then()
+            .catch((err) => {
+              console.log(err);
+            });
+        });
+      });
+    }
+  }, 5000);
+})();
 app.get("/ENGjson", async (req, res) => {
   try {
     const data = fs.readFileSync(
