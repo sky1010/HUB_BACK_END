@@ -84,7 +84,7 @@ const newUser = {
   name: "Greig Jones",
   email: "greig@forumconcepts.fr",
   userName: "admin",
-  password: "hubsqlBeta",
+  password: "P@55word",
 };
 (async () => {
   const [client] = await clientModal.findOrCreate({
